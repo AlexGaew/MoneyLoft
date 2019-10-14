@@ -27,6 +27,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             tools:text="70"
+            android:textColor="#0131BD"
+            android:textStyle="bold"
             android:textSize="20sp"
 
             />

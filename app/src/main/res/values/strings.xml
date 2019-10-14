@@ -5,4 +5,6 @@
     <string name="button_add">Add</string>
     <string name="add_button">ADD</string>
     <string name="price_this_currency">%1$s $</string>
+    <string name="expences">Расходы</string>
+    <string name="income">Доходы</string>
 </resources>
