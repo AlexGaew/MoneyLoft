@@ -12,10 +12,11 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHolder> {
-    private List<Item> mItemList = new ArrayList<Item>();
+    private LinkedList<Item> mItemList = new LinkedList<Item>();
     private int colorId;
 
     public ItemsAdapter(int colorId) {
@@ -40,8 +41,9 @@ public class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ItemViewHold
     }
 
     public void addItem(Item item) {
-        mItemList.add(item);
-        notifyDataSetChanged();
+      mItemList.addFirst(item);
+
+       notifyDataSetChanged();
 
     }
 
