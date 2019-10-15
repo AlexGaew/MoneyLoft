@@ -9,14 +9,26 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.text.TextUtils;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.google.android.material.tabs.TabLayout;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 
 public class MainActivity extends AppCompatActivity {
+    public static final String EXPENSE = "expense";
+    public static final String INCOME = "income";
+    private static final String USER_ID = "GTwoA";
+    public static final String TOKEN = "token";
+    private Api mApi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +42,28 @@ public class MainActivity extends AppCompatActivity {
         tablLayout.setupWithViewPager(viewPager);
         tablLayout.getTabAt(0).setText(R.string.expences);
         tablLayout.getTabAt(1).setText(R.string.income);
+
+        mApi = ((LoftApp) getApplication()).getApi();
+        final String token = PreferenceManager.getDefaultSharedPreferences(this).getString(TOKEN,"");
+        if(TextUtils.isEmpty(token)) {
+
+            Call<Status> auth = mApi.auth(USER_ID);
+            auth.enqueue(new Callback<Status>() {
+                @Override
+                public void onResponse(Call<Status> call, Response<Status> response) {
+
+
+                    SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(MainActivity.this).edit();
+                    editor.putString(TOKEN, response.body().getToken());
+                    editor.apply();
+                }
+
+                @Override
+                public void onFailure(Call<Status> call, Throwable t) {
+
+                }
+            });
+        }
 
     }
 
@@ -47,9 +81,9 @@ public class MainActivity extends AppCompatActivity {
 
             switch (position) {
                 case 0:
-                    return  BudgetFragment.newInstancee(R.color.dark_sky_blue);
+                    return BudgetFragment.newInstancee(R.color.dark_sky_blue, EXPENSE);
                 case 1:
-                    return  BudgetFragment.newInstancee(R.color.apple_green);
+                    return BudgetFragment.newInstancee(R.color.apple_green, INCOME);
 
                 default:
                     return null;
