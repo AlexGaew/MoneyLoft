@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">ЛофтДеги</string>
-    <string name="edittext_price_hint">Цена</string>
-    <string name="edittext_name_hint">Название</string>
-    <string name="button_add">Добавить</string>
-    <string name="price_this_currency">%1$s ₽</string>
-</resources>

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -31,6 +32,8 @@ public class BudgetFragment extends Fragment {
     public static final String TYPE = "fragmentType";
 
     private ItemsAdapter mAdapter;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
 
     private Api mApi;
 
@@ -59,18 +62,17 @@ public class BudgetFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_budget, null); //имя нового лайаута
-        Button callAddButton = view.findViewById(R.id.button_add_item_activity); //ищем дочерние вью во вью самого фрагмента
-        callAddButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivityForResult(new Intent(getActivity(), AddItemActivity.class), REQUEST_CODE);
-
-
-            }
-        });
 
 
         RecyclerView recyclerView = view.findViewById(R.id.budget_item_list);
+        mSwipeRefreshLayout = view.findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadItems();
+
+            }
+        });
 
 
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
@@ -96,7 +98,7 @@ public class BudgetFragment extends Fragment {
             final String name = data.getStringExtra("name");
 
 
-            final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(MainActivity.TOKEN,"");
+            final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(MainActivity.TOKEN, "");
 
             Call<Status> call = mApi.addItem(new AddItemRequest(name, getArguments().getString(TYPE), price), token);
             call.enqueue(new Callback<Status>() {
@@ -118,35 +120,39 @@ public class BudgetFragment extends Fragment {
             });
 
 
-        //    mAdapter.addItem(new Item(name, price));
+            //    mAdapter.addItem(new Item(name, price));
 
         }
     }
-    private void loadItems(){
-        final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(MainActivity.TOKEN,"");
-       Call<List<Item>> items = mApi.getItems(getArguments().getString(TYPE), token);  //когда пойдут айтемы с сервера мы должны в методе ОНреспонсе заполнить
+
+    private void loadItems()
+    {
+        final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(MainActivity.TOKEN, "");
+        Call<List<Item>> items = mApi.getItems(getArguments().getString(TYPE), token);  //когда пойдут айтемы с сервера мы должны в методе ОНреспонсе заполнить
         // наш адаптер новыми данными
+        items.enqueue(new Callback<List<Item>>()
+        {
 
-       items.enqueue(new Callback<List<Item>>() {
-           @Override
-           public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
+            @Override
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response)
+            {
+                mAdapter.clearItems();
+                mSwipeRefreshLayout.setRefreshing(false);
+                List<Item> items = response.body();
+                for (Item item : items) {
+                    mAdapter.addItem(item);
 
-               List<Item> items = response.body();
-               for (Item item: items){
-                   mAdapter.addItem(item);
 
+                }
 
+            }
 
+            @Override
+            public void onFailure(Call<List<Item>> call, Throwable t) {
+                mSwipeRefreshLayout.setRefreshing(false);
 
-               }
-
-           }
-
-           @Override
-           public void onFailure(Call<List<Item>> call, Throwable t) {
-
-           }
-       });
+            }
+        });
 
 
     }
