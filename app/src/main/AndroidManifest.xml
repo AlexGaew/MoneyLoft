@@ -21,7 +21,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AddItemActivity" />
+        <activity android:name=".AddItemActivity" android:theme="@style/AddItemTheme" />
     </application>
 
 </manifest>
