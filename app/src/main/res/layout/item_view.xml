@@ -16,7 +16,7 @@
 
         <TextView
             android:id="@+id/name_view"
-            android:layout_width="wrap_content"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             tools:text="Молоко"
             android:textSize="20sp"
@@ -33,19 +33,7 @@
 
             />
 
-
-
-
-
-
     </RelativeLayout>
-
-
-
-
-
-
-
 
 
 </FrameLayout>
