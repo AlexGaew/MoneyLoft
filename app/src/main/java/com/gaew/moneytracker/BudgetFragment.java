@@ -84,8 +84,10 @@ public class BudgetFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
+    {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
         int price;
         try {
             price = Integer.parseInt(data.getStringExtra("price"));
@@ -94,7 +96,7 @@ public class BudgetFragment extends Fragment {
             price = 0;
         }
         final int realPrice = price;
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
             final String name = data.getStringExtra("name");
 
 
@@ -125,17 +127,14 @@ public class BudgetFragment extends Fragment {
         }
     }
 
-    private void loadItems()
-    {
+    protected void loadItems() {
         final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(MainActivity.TOKEN, "");
         Call<List<Item>> items = mApi.getItems(getArguments().getString(TYPE), token);  //когда пойдут айтемы с сервера мы должны в методе ОНреспонсе заполнить
         // наш адаптер новыми данными
-        items.enqueue(new Callback<List<Item>>()
-        {
+        items.enqueue(new Callback<List<Item>>() {
 
             @Override
-            public void onResponse(Call<List<Item>> call, Response<List<Item>> response)
-            {
+            public void onResponse(Call<List<Item>> call, Response<List<Item>> response) {
                 mAdapter.clearItems();
                 mSwipeRefreshLayout.setRefreshing(false);
                 List<Item> items = response.body();

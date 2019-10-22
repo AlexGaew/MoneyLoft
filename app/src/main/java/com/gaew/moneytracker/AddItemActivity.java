@@ -1,5 +1,6 @@
 package com.gaew.moneytracker;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -26,6 +27,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         mPriceEditText = findViewById(R.id.price_edit_text);
         mNameEditText = findViewById(R.id.name_edit_text);
+        mNameEditText.requestFocus();
         mNameEditText.addTextChangedListener(new TextWatcher() {  // add TextWatcher, change button color
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -83,6 +85,20 @@ public class AddItemActivity extends AppCompatActivity {
     public void checkEditHasText(){
         mAddButton.setEnabled(!TextUtils.isEmpty(mName)&& !TextUtils.isEmpty(mPrice));
 
+    }
+
+    /**
+     * Called when the activity has detected the user's press of the back
+     * key. The {@link #getOnBackPressedDispatcher() OnBackPressedDispatcher} will be given a
+     * chance to handle the back button before the default behavior of
+     * {@link Activity#onBackPressed()} is invoked.
+     *
+     * @see #getOnBackPressedDispatcher()
+     */
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.from_left_in, R.anim.from_right_out);
     }
 }
 
