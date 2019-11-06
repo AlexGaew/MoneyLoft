@@ -11,12 +11,62 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+
+    signingConfigs {
         release {
-            minifyEnabled false
+
+            storeFile file("release.keystore")
+            storePassword '123456'
+            keyAlias 'GtwoA'
+            keyPassword '123456'
+        }
+
+    }
+
+
+    buildTypes {
+
+        debug {
+            buildConfigField("String", "URL", "\"https://loftschool.com/android-api/basic/v1/\"")
+            resValue("string", "app_name", "MoneyTracker-debug")
+        }
+
+        release {
+
+            signingConfig signingConfigs.release
+            buildConfigField("String", "URL", "\"https://loftschool.com/android-api/basic/v1/\"")
+            resValue("string", "app_name", "MoneyTracker")
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    flavorDimensions 'target'
+
+    productFlavors {
+        mobile {
+
+            resValue("String", "app_name", "moneytracker-mobile")
+
+            applicationId "ru.moneytracker.test"
+        }
+
+        beta {
+
+            resValue("String", "app_name", "moneytracker-beta")
+            applicationIdSuffix ".beta"
+        }
+
+//        mobileColor{
+//            resValue("String", "app_name", "moneytracker-mobile")
+//            resValue("Color", "colorPrimary", "@color/colorPrimary")
+//            applicationIdSuffix ".test-drive"
+//        }
+
+
+
+    }
+
 }
 
 dependencies {

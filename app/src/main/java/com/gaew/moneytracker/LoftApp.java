@@ -17,7 +17,7 @@ public class LoftApp extends Application {
         OkHttpClient client = new OkHttpClient.Builder().build();
 
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://loftschool.com/android-api/basic/v1/")
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(BuildConfig.URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build();

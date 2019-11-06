@@ -2,6 +2,7 @@ package com.gaew.moneytracker;
 
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
 import androidx.core.content.ContextCompat;
@@ -27,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private TabLayout mTablayout;
     private Toolbar mToolbar;
+    private FloatingActionButton mFloatingActionButton;
 
 
     @Override
@@ -38,14 +40,40 @@ public class MainActivity extends AppCompatActivity {
         mToolbar = findViewById(R.id.toolbar);
 
         final ViewPager viewPager = findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(3);
         final BudgetPagerAdapter adapter = new BudgetPagerAdapter(getSupportFragmentManager(),
                 FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
 
         viewPager.setAdapter(adapter);
 
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
-        FloatingActionButton floatingActionButton = findViewById(R.id.fab);
-        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                if(position==2){
+                    mFloatingActionButton.hide();
+                }
+                else {
+
+                    mFloatingActionButton.show();
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
+
+
+
+        mFloatingActionButton  = findViewById(R.id.fab);
+        mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -61,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         mTablayout.setupWithViewPager(viewPager);
         mTablayout.getTabAt(0).setText(R.string.expences);
         mTablayout.getTabAt(1).setText(R.string.income);
+        mTablayout.getTabAt(2).setText(R.string.balance);
 
         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
             if (fragment instanceof BudgetFragment) {
@@ -68,35 +97,37 @@ public class MainActivity extends AppCompatActivity {
 
             }
         }
+
+
+    }
+    public void loadBalance(){
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment instanceof BalanceFragment) {
+                ((BalanceFragment) fragment).loadBalance();
+
+            }
+        }
+
     }
 
-    /**
-     * Notifies the Activity that a support action mode has been started.
-     * Activity subclasses overriding this method should call the superclass implementation.
-     *
-     * @param mode The new action mode.
-     */
+
     @Override
     public void onSupportActionModeStarted(@NonNull ActionMode mode) {
         super.onSupportActionModeStarted(mode);
         mTablayout.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_gray_blue));
         mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.dark_gray_blue));
+        mFloatingActionButton.hide();
 
 
     }
 
 
-    /**
-     * Notifies the activity that a support action mode has finished.
-     * Activity subclasses overriding this method should call the superclass implementation.
-     *
-     * @param mode The action mode that just finished.
-     */
     @Override
     public void onSupportActionModeFinished(@NonNull ActionMode mode) {
         super.onSupportActionModeFinished(mode);
         mTablayout.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
         mToolbar.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        mFloatingActionButton.show();
     }
 
     static class BudgetPagerAdapter extends FragmentPagerAdapter {
@@ -117,6 +148,9 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return BudgetFragment.newInstancee(R.color.apple_green, INCOME);
 
+                case 2:
+                    return BalanceFragment.newInstancee();
+
                 default:
                     return null;
 
@@ -126,11 +160,10 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
 
     }
-
 
 }

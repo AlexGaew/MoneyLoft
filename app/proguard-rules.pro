@@ -19,3 +19,10 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.gaew.moneytracker.AddItemRequest {*;}
+-keep class com.gaew.moneytracker.BalanceResponce {*;}
+-keep class com.gaew.moneytracker.Item {*;}
+-keep class com.gaew.moneytracker.Status {*;}
+-keep class com.gaew.moneytracker.AuthActivity {*;}
+
