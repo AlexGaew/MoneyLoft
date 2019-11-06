@@ -94,18 +94,17 @@ public class BudgetFragment extends Fragment implements ItemsAdapterListener, Ac
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
-    {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK){
-        int price;
-        try {
-            price = Integer.parseInt(data.getStringExtra("price"));
+        if (requestCode == REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            int price;
+            try {
+                price = Integer.parseInt(data.getStringExtra("price"));
 
-        } catch (NumberFormatException e) {
-            price = 0;
-        }
-        final int realPrice = price;
+            } catch (NumberFormatException e) {
+                price = 0;
+            }
+            final int realPrice = price;
 
             final String name = data.getStringExtra("name");
 
@@ -150,6 +149,7 @@ public class BudgetFragment extends Fragment implements ItemsAdapterListener, Ac
 
 
                 }
+                ((MainActivity) getActivity()).loadBalance();
 
             }
 
@@ -166,21 +166,22 @@ public class BudgetFragment extends Fragment implements ItemsAdapterListener, Ac
 
     @Override
     public void onItemClick(Item item, int position) {
-      mAdapter.clearItem(position);
-      if(mActionMode !=null){
-          mActionMode.setTitle(getString(R.string.selected, String.valueOf(mAdapter.getSelectedSize())));
+        mAdapter.clearItem(position);
+        if (mActionMode != null) {
+            mActionMode.setTitle(getString(R.string.selected, String.valueOf(mAdapter.getSelectedSize())));
 
-      }
+        }
 
     }
 
 
     @Override
     public void onItemLongClick(Item item, int position) {
-        if (mActionMode == null){
-        getActivity().startActionMode(this);}
+        if (mActionMode == null) {
+            getActivity().startActionMode(this);
+        }
         mAdapter.toggleItem(position);
-        if(mActionMode !=null){
+        if (mActionMode != null) {
             mActionMode.setTitle(getString(R.string.selected, String.valueOf(mAdapter.getSelectedSize())));
 
         }
@@ -203,14 +204,15 @@ public class BudgetFragment extends Fragment implements ItemsAdapterListener, Ac
 
     @Override
     public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
-        if (menuItem.getItemId()==R.id.remove){
+        if (menuItem.getItemId() == R.id.remove) {
 
             new AlertDialog.Builder(getContext()).setMessage(R.string.confirmation)
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener(){
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             removeItems();
+
 
                         }
                     })
@@ -228,25 +230,25 @@ public class BudgetFragment extends Fragment implements ItemsAdapterListener, Ac
     }
 
     private void removeItems() {
-String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(MainActivity.TOKEN, "");
+        String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString(MainActivity.TOKEN, "");
         List<Integer> selectedItems = mAdapter.getSelectedItemIds();
-        for (Integer itemId : selectedItems){
+        for (Integer itemId : selectedItems) {
 
-           Call<Status> call = mApi.removeItem(String.valueOf(itemId.intValue()), token);
-           call.enqueue(new Callback<Status>() {
-               @Override
-               public void onResponse(Call<Status> call, Response<Status> response) {
+            Call<Status> call = mApi.removeItem(String.valueOf(itemId.intValue()), token);
+            call.enqueue(new Callback<Status>() {
+                @Override
+                public void onResponse(Call<Status> call, Response<Status> response) {
 
-                 loadItems();
-                 mAdapter.clesrSelections();
+                    loadItems();
+                    mAdapter.clesrSelections();
 
-               }
+                }
 
-               @Override
-               public void onFailure(Call<Status> call, Throwable t) {
+                @Override
+                public void onFailure(Call<Status> call, Throwable t) {
 
-               }
-           });
+                }
+            });
         }
     }
 
